@@ -4,121 +4,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>TechStore Maly</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+
+        body{
+            font-family:,sans-serif;
+            background:#eefdec;
+        }
+
+        .logo-tech{
+    font-family: 'Poppins', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgb(252, 58, 15);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow:
+        3px 3px 8px rgb(243, 250, 56);
+}
+
+@media(max-width:768px){
+    .logo-tech{
+        font-size: 3rem;
+    }
+}
+}
+
+        .navbar-brand{
+            font-family:'Orbitron',sans-serif;
+            color:#00ffff !important;
+            font-weight:bold;
+        }
+
+        header{
+            background:linear-gradient(90deg,#49c6f7,#af93dd);
+            color:white;
+            padding:70px 20px;
+            text-align:center;
+        }
+
+        .section-title{
+            color:#0d6efd;
+            font-weight:bold;
+            margin-bottom:20px;
+        }
+
+        .card{
+            box-shadow:0px 4px 10px rgba(0,0,0,0.2);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        aside{
+            background:#e9ecef;
+            padding:20px;
+            border-radius:10px;
+        }
+
+        footer{
+            background:#212529;
+            color:white;
+            text-align:center;
+            padding:20px;
+            margin-top:20px;
+        }
+
+        .contact-btn{
+            margin:5px;
+        }
+
+        @media(max-width:768px){
+
+            .logo-tech{
+                font-size:2rem;
+            }
+
+            iframe{
+                width:100%;
+                height:250px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-    <header>
-        <h1>TechStore Maly</h1>
-    </header>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
 
-    <nav>
-        <ul>
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#quienes-somos">Quiénes Somos</a></li>
-            <li><a href="#productos">Productos</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ul>
-    </nav>
+    <div class="container">
 
-    <main>
+        <a class="navbar-brand" href="#">
+            TECHSTORE MALY
+        </a>
 
-        <section id="inicio">
-            <h2>Inicio</h2>
-            <p>
-                Bienvenido a TechStore Maly, una tienda virtual especializada en la venta de
-                productos tecnológicos de alta calidad. Ofrecemos equipos modernos,
-                accesorios innovadores y soluciones digitales para estudiantes,
-                profesionales y empresas. Nuestro objetivo es acercar la tecnología a
-                nuestros clientes mediante productos confiables y un excelente servicio.
-            </p>
-        </section>
+        <button class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#menu">
 
-        <section id="quienes-somos">
-            <h2>Quiénes Somos</h2>
+            <span class="navbar-toggler-icon"></span>
 
-            <article>
-                <p>
-                    TechStore Maly es un emprendimiento dedicado a la comercialización de
-                    productos tecnológicos y accesorios electrónicos. Nuestro proyecto surge
-                    con la finalidad de brindar a los usuarios acceso a dispositivos modernos
-                    que faciliten sus actividades académicas, laborales y personales.
-                    Contamos con una amplia variedad de productos como computadoras,
-                    teléfonos inteligentes, accesorios gamer y dispositivos de almacenamiento.
-                    Buscamos ofrecer calidad, innovación y precios competitivos para satisfacer
-                    las necesidades de nuestros clientes. Además, nos esforzamos por brindar
-                    atención personalizada y mantenernos actualizados con las últimas tendencias
-                    tecnológicas del mercado. Nuestra misión es convertirnos en una tienda de
-                    confianza que contribuya al crecimiento digital de las personas mediante
-                    soluciones tecnológicas eficientes y accesibles.
-                </p>
+        </button>
 
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475"
-                     alt="Productos tecnológicos"
-                     width="500">
-            </article>
-        </section>
+        <div class="collapse navbar-collapse" id="menu">
 
-        <section id="productos">
-            <h2>Productos</h2>
+            <ul class="navbar-nav ms-auto">
 
-            <ul>
-                <li>Laptops y computadoras de escritorio</li>
-                <li>Teléfonos inteligentes</li>
-                <li>Audífonos inalámbricos</li>
-                <li>Teclados y mouse gamer</li>
-                <li>Memorias USB y discos SSD</li>
-                <li>Accesorios tecnológicos</li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#inicio">Inicio</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#quienes">Quiénes Somos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#productos">Productos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#contacto">Contacto</a>
+                </li>
+
             </ul>
 
-            <h3>Conoce más sobre tecnología</h3>
+        </div>
 
-            <iframe width="560" height="315"
-                src="https://www.youtube.com/embed/h0cf2z3lrz4"
-                title="Video sobre tecnología"
-                frameborder="0"
-                allowfullscreen>
-            </iframe>
-        </section>
+    </div>
 
-        <section id="contacto">
-            <h2>Contacto</h2>
+</nav>
+
+<header>
+
+    <h1 class="logo-tech">
+        TECHSTORE MALY
+    </h1>
+
+    <p class="lead">
+        Innovación y tecnología al alcance de todos
+    </p>
+
+    <a href="#productos" class="btn btn-light btn-lg">
+        Ver Productos
+    </a>
+
+</header>
+
+<main>
+
+<section id="inicio" class="container text-center p-5">
+
+    <h2 class="section-title">Inicio</h2>
+
+    <p>
+        Bienvenido a TechStore Maly, una tienda virtual especializada
+        en productos tecnológicos para estudiantes, profesionales
+        y empresas.
+    </p>
+
+</section>
+
+<section id="quienes" class="container my-5">
+
+    <h2 class="section-title text-center">
+        Quiénes Somos
+    </h2>
+
+    <div class="row align-items-center">
+
+        <div class="col-md-6">
+
+            <img
+            src="https://images.unsplash.com/photo-1518770660439-4636190af475"
+            class="img-fluid rounded shadow"
+            alt="Tecnología">
+
+        </div>
+
+        <div class="col-md-6">
+
+            <article>
+
+                <p>
+                    TechStore Maly es una tienda tecnológica enfocada
+                    en brindar productos innovadores y de calidad.
+                    Nuestro objetivo es acercar la tecnología a las
+                    personas mediante equipos modernos, accesorios y
+                    soluciones digitales que mejoren el aprendizaje,
+                    trabajo y entretenimiento. Nos caracterizamos por
+                    ofrecer productos confiables, atención personalizada
+                    y precios competitivos para satisfacer las necesidades
+                    de nuestros clientes.
+                </p>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section id="productos" class="container my-5">
+
+    <h2 class="section-title text-center">
+        Productos
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-3">
+
+            <div class="card m-2 h-100">
+
+                <div class="card-body">
+
+                    <h5>Laptops</h5>
+
+                    <ul>
+                        <li>HP Pavilion 15</li>
+                        <li>Lenovo IdeaPad 3</li>
+                        <li>Dell Inspiron 15</li>
+                        <li>ASUS VivoBook</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card m-2 h-100">
+
+                <div class="card-body">
+
+                    <h5>Smartphones</h5>
+
+                    <ul>
+                        <li>Samsung Galaxy A55</li>
+                        <li>iPhone 15</li>
+                        <li>Xiaomi Redmi Note 13</li>
+                        <li>Motorola Edge 50</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card m-2 h-100">
+
+                <div class="card-body">
+
+                    <h5>Accesorios Gamer</h5>
+
+                    <ul>
+                        <li>Mouse Redragon</li>
+                        <li>Teclado Mecánico</li>
+                        <li>Audífonos HyperX</li>
+                        <li>Mouse Pad RGB</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card m-2 h-100">
+
+                <div class="card-body">
+
+                    <h5>Componentes PC</h5>
+
+                    <ul>
+                        <li>Intel Core i5</li>
+                        <li>AMD Ryzen 7</li>
+                        <li>RAM Kingston 16GB</li>
+                        <li>SSD Kingston 1TB</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+
+        <h3>Video Tecnológico</h3>
+
+        <iframe width="560"
+        height="315"
+        src="https://www.youtube.com/embed/h0cf2z3lrz4"
+        title="Video Tecnología"
+        allowfullscreen>
+        </iframe>
+
+    </div>
+
+</section>
+
+<section id="contacto" class="container my-5">
+
+    <h2 class="section-title text-center">
+        Contacto
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <form>
+
+                <div class="mb-3">
+                    <input type="text"
+                    class="form-control"
+                    placeholder="Nombre">
+                </div>
+
+                <div class="mb-3">
+                    <input type="email"
+                    class="form-control"
+                    placeholder="Correo electrónico">
+                </div>
+
+                <div class="mb-3">
+                    <input type="text"
+                    class="form-control"
+                    placeholder="Asunto">
+                </div>
+
+                <div class="mb-3">
+                    <textarea class="form-control"
+                    rows="4"
+                    placeholder="Mensaje"></textarea>
+                </div>
+
+                <button class="btn btn-success">
+                    Enviar Mensaje
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="col-md-6">
 
             <p><strong>Correo:</strong> techstoremaly@gmail.com</p>
-            <p><strong>Teléfono:</strong> +593 94693440</p>
-            <p><strong>Dirección:</strong> Manabi, Pichincha, Barraganete, Ecuador</p>
+            <p><strong>Teléfono:</strong> +593 99 469 3440</p>
+            <p><strong>Dirección:</strong> Manabi, Ecuador</p>
 
-            <p>
-                <strong>Redes Sociales:</strong>
-                <a href="https://www.facebook.com" target="_blank">Facebook</a> |
-                <a href="https://www.instagram.com" target="_blank">Instagram</a> |
-                <a href="https://www.tiktok.com" target="_blank">TikTok</a>
-            </p>
-        </section>
+            <a href="#" class="btn btn-primary contact-btn">Correo</a>
+            <a href="#" class="btn btn-info contact-btn">Facebook</a>
+            <a href="#" class="btn btn-danger contact-btn">Instagram</a>
 
-    </main>
+        </div>
 
-    <aside>
-        <h3>Promociones</h3>
-        <p>
-            Obtén un 30% de descuento en tu primera compra y envío gratuito
-            en pedidos superiores a $100.
-        </p>
+    </div>
 
-        <h3>Horario de Atención</h3>
-        <p>
-            Lunes a Viernes: 09h00 - 18h00<br>
-            Sábados: 09h00 - 14h00
-        </p>
-    </aside>
+</section>
 
-    <footer>
-        <p>Desarrollado por Madelin Pianda</p>
-        <p>Asignatura: Desarrollo de Aplicaciones Web</p>
-        <p>Año: 2026</p>
-    </footer>
+<aside class="container my-4">
+
+    <h3>Promociones</h3>
+
+    <p>
+        20% de descuento en tu primera compra.
+    </p>
+
+    <h3>Horario</h3>
+
+    <p>
+        Lunes a Viernes: 09h00 - 18h00<br>
+        Sábados: 09h00 - 14h00
+    </p>
+
+</aside>
+
+</main>
+
+<footer>
+
+    <p>Desarrollado por Maly Pianda</p>
+    <p>Desarrollo de Aplicaciones Web</p>
+    <p>2026</p>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
 ```
-
