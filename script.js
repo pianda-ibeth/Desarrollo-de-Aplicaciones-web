@@ -28,6 +28,63 @@ document.addEventListener('DOMContentLoaded', function () {
         'Accesorios': 'bg-warning text-dark'
     };
 
+    // Reglas mínimas de validación
+    const REGLAS = {
+        nombreMinLength: 3,
+        descripcionMinLength: 15
+    };
+
+    // Palabras/marcas relacionadas a productos tecnológicos.
+    // El nombre del producto debe contener al menos una de estas palabras
+    // (o similar) para considerarse válido.
+    const PALABRAS_TECH = [
+        // Categorías generales
+        'laptop', 'notebook', 'portatil', 'portátil', 'pc', 'computador', 'computadora',
+        'smartphone', 'celular', 'telefono', 'teléfono', 'tablet', 'smartwatch', 'reloj',
+        'mouse', 'raton', 'ratón', 'teclado', 'monitor', 'pantalla', 'audifono', 'audífono',
+        'auricular', 'parlante', 'bocina', 'camara', 'cámara', 'webcam', 'microfono', 'micrófono',
+        'router', 'cargador', 'cable', 'adaptador', 'bateria', 'batería', 'power bank', 'powerbank',
+        'consola', 'joystick', 'control', 'impresora', 'proyector', 'disco', 'ssd', 'hdd',
+        'memoria', 'ram', 'procesador', 'tarjeta', 'grafica', 'gráfica', 'gpu', 'cpu',
+        'mousepad', 'pad', 'gamer', 'rgb', 'inalambrico', 'inalámbrico', 'bluetooth', 'usb',
+        'hub', 'audio', 'video', 'accesorio', 'funda', 'case', 'soporte', 'base',
+        // Marcas comunes
+        'hp', 'lenovo', 'dell', 'asus', 'acer', 'msi', 'apple', 'iphone', 'ipad', 'macbook',
+        'samsung', 'xiaomi', 'redmi', 'motorola', 'huawei', 'honor', 'oppo',
+        'intel', 'amd', 'ryzen', 'kingston', 'logitech', 'redragon', 'hyperx', 'razer',
+        'corsair', 'steelseries', 'jbl', 'sony', 'lg', 'nvidia', 'geforce', 'xbox', 'playstation', 'nintendo'
+    ];
+
+    // Detecta texto que "parece" escrito al azar (ej. hdsjjd, asdkjh)
+    // revisando que no haya demasiadas consonantes seguidas y que exista
+    // al menos una vocal.
+    function pareceTextoAlAzar(valor) {
+        const sinEspacios = valor.trim();
+        if (sinEspacios === '') return true;
+
+        const tieneVocal = /[aeiouáéíóú]/i.test(sinEspacios);
+        if (!tieneVocal) return true;
+
+        // 4 o más consonantes seguidas suele indicar texto sin sentido
+        const consonantesSeguidas = /[bcdfghjklmnpqrstvwxyzñ]{4,}/i;
+        if (consonantesSeguidas.test(sinEspacios)) return true;
+
+        return false;
+    }
+
+    // Revisa si el nombre contiene alguna palabra/marca tecnológica conocida
+    function esNombreTecnologico(valor) {
+        const valorNormalizado = valor.toLowerCase();
+        return PALABRAS_TECH.some(function (palabra) {
+            return valorNormalizado.includes(palabra);
+        });
+    }
+
+    // Contenedores de error de cada campo (deben existir en el HTML)
+    const errorNombre = document.getElementById('errorNombre');
+    const errorDescripcion = document.getElementById('errorDescripcion');
+    const errorCategoria = document.getElementById('errorCategoria');
+
     // ---------- Funciones auxiliares ----------
 
     // Muestra un mensaje dinámico (éxito, error o aviso) usando clases de Bootstrap
@@ -47,31 +104,109 @@ document.addEventListener('DOMContentLoaded', function () {
 
         alerta.appendChild(botonCerrar);
         divMensaje.appendChild(alerta);
+
+        // El mensaje general desaparece solo después de unos segundos
+        setTimeout(function () {
+            if (alerta.parentNode) {
+                alerta.classList.remove('show');
+                alerta.remove();
+            }
+        }, 3500);
     }
 
-    // Resalta visualmente un campo como válido o inválido
-    function marcarCampo(campo, esValido) {
-        campo.classList.toggle('is-invalid', !esValido);
-        campo.classList.toggle('is-valid', esValido);
+    // Aplica el resultado { valido, mensaje } de una validación a un campo:
+    // agrega/quita is-valid / is-invalid y escribe el mensaje de error.
+    function aplicarResultado(campo, resultado, cajaError) {
+        if (resultado.valido) {
+            campo.classList.remove('is-invalid');
+            campo.classList.add('is-valid');
+            if (cajaError) cajaError.textContent = '';
+        } else {
+            campo.classList.remove('is-valid');
+            campo.classList.add('is-invalid');
+            if (cajaError) cajaError.textContent = resultado.mensaje;
+        }
+        return resultado.valido;
     }
 
-    // Valida los campos del formulario y devuelve la lista de campos vacíos
-    function validarFormulario(nombre, descripcion, categoria) {
-        const camposVacios = [];
+    // ---------- Validaciones por campo ----------
 
-        const nombreValido = nombre.trim() !== '';
-        const descripcionValida = descripcion.trim() !== '';
-        const categoriaValida = categoria !== '';
+    function validarNombre() {
+        const valor = inputNombre.value.trim();
 
-        marcarCampo(inputNombre, nombreValido);
-        marcarCampo(inputDescripcion, descripcionValida);
-        marcarCampo(selectCategoria, categoriaValida);
+        if (valor === '') {
+            return { valido: false, mensaje: 'El nombre del producto es obligatorio.' };
+        }
+        if (valor.length < REGLAS.nombreMinLength) {
+            return {
+                valido: false,
+                mensaje: 'El nombre debe tener al menos ' + REGLAS.nombreMinLength + ' caracteres.'
+            };
+        }
+        if (pareceTextoAlAzar(valor)) {
+            return {
+                valido: false,
+                mensaje: 'Ese nombre no parece válido. Escribe el nombre real de un producto.'
+            };
+        }
+        if (!esNombreTecnologico(valor)) {
+            return {
+                valido: false,
+                mensaje: 'El nombre debe corresponder a un producto tecnológico (ej. Laptop, Mouse, Smartphone, Teclado, HP, Samsung, etc.).'
+            };
+        }
+        return { valido: true, mensaje: '' };
+    }
 
-        if (!nombreValido) camposVacios.push('Nombre');
-        if (!descripcionValida) camposVacios.push('Descripción');
-        if (!categoriaValida) camposVacios.push('Categoría');
+    function validarDescripcion() {
+        const valor = inputDescripcion.value.trim();
 
-        return camposVacios;
+        if (valor === '') {
+            return { valido: false, mensaje: 'La descripción es obligatoria.' };
+        }
+        if (valor.length < REGLAS.descripcionMinLength) {
+            return {
+                valido: false,
+                mensaje: 'Agrega más detalle (mínimo ' + REGLAS.descripcionMinLength + ' caracteres).'
+            };
+        }
+        if (pareceTextoAlAzar(valor)) {
+            return {
+                valido: false,
+                mensaje: 'La descripción no parece válida. Escribe las características reales del producto.'
+            };
+        }
+        return { valido: true, mensaje: '' };
+    }
+
+    function validarCategoria() {
+        if (selectCategoria.value === '') {
+            return { valido: false, mensaje: 'Selecciona una categoría.' };
+        }
+        return { valido: true, mensaje: '' };
+    }
+
+    // Ejecuta la validación de un campo puntual y refleja el resultado en pantalla
+    function validarCampo(nombreCampo) {
+        switch (nombreCampo) {
+            case 'nombre':
+                return aplicarResultado(inputNombre, validarNombre(), errorNombre);
+            case 'descripcion':
+                return aplicarResultado(inputDescripcion, validarDescripcion(), errorDescripcion);
+            case 'categoria':
+                return aplicarResultado(selectCategoria, validarCategoria(), errorCategoria);
+            default:
+                return true;
+        }
+    }
+
+    // Valida todo el formulario (se usa en el submit) y devuelve si es válido
+    function validarFormularioCompleto() {
+        const nombreValido = validarCampo('nombre');
+        const descripcionValida = validarCampo('descripcion');
+        const categoriaValida = validarCampo('categoria');
+
+        return nombreValido && descripcionValida && categoriaValida;
     }
 
     // Quita las marcas visuales de validación de un grupo de campos
@@ -79,6 +214,9 @@ document.addEventListener('DOMContentLoaded', function () {
         [inputNombre, inputDescripcion, selectCategoria].forEach(function (campo) {
             campo.classList.remove('is-valid', 'is-invalid');
         });
+        errorNombre.textContent = '';
+        errorDescripcion.textContent = '';
+        errorCategoria.textContent = '';
     }
 
     // Actualiza el contador de productos en pantalla
@@ -134,23 +272,43 @@ document.addEventListener('DOMContentLoaded', function () {
         return columna;
     }
 
+    // ---------- Validación en tiempo real ----------
+    // Mientras el usuario escribe (input), se valida al instante
+    inputNombre.addEventListener('input', function () {
+        validarCampo('nombre');
+    });
+    inputDescripcion.addEventListener('input', function () {
+        validarCampo('descripcion');
+    });
+
+    // Al perder el foco (blur) también se valida, útil para el select
+    inputNombre.addEventListener('blur', function () {
+        validarCampo('nombre');
+    });
+    inputDescripcion.addEventListener('blur', function () {
+        validarCampo('descripcion');
+    });
+    selectCategoria.addEventListener('blur', function () {
+        validarCampo('categoria');
+    });
+    selectCategoria.addEventListener('change', function () {
+        validarCampo('categoria');
+    });
+
     // ---------- Evento principal: registrar producto ----------
     formulario.addEventListener('submit', function (evento) {
         evento.preventDefault(); // Evita que la página se recargue
 
-        const nombre = inputNombre.value;
-        const descripcion = inputDescripcion.value;
-        const categoria = selectCategoria.value;
+        const formularioValido = validarFormularioCompleto();
 
-        const camposVacios = validarFormulario(nombre, descripcion, categoria);
-
-        if (camposVacios.length > 0) {
-            mostrarMensaje(
-                'Completa los siguientes campos antes de registrar: ' + camposVacios.join(', ') + '.',
-                'danger'
-            );
+        if (!formularioValido) {
+            mostrarMensaje('Revisa los campos marcados en rojo antes de continuar.', 'danger');
             return;
         }
+
+        const nombre = inputNombre.value.trim();
+        const descripcion = inputDescripcion.value.trim();
+        const categoria = selectCategoria.value;
 
         contadorId++;
         totalProductos++;
