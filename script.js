@@ -1,7 +1,4 @@
-// ============================================================
-// TechStore Maly - script.js
-// Registro dinámico de productos (sección #registro)
-// ============================================================
+
 
 document.addEventListener('DOMContentLoaded', function () {
 
