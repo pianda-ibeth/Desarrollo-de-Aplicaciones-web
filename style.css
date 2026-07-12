@@ -1,5 +1,3 @@
-
-
 :root{
     --bg:        #f8f6fc;
     --bg-glow-1: rgba(201, 182, 240, 0.25);
@@ -285,6 +283,34 @@ section p, section li, section article{
 
 img{
     border-radius:22px;
+}
+
+/* PRODUCTOS DEL CATÁLOGO CON IMAGEN (generados por script.js) */
+
+.lista-productos-categoria{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.producto-item{
+    text-align:center;
+}
+
+.producto-item-img{
+    width:100%;
+    max-width:110px;
+    aspect-ratio:3 / 2;
+    object-fit:cover;
+    border-radius:12px;
+    display:block;
+    margin:0 auto;
+}
+
+.producto-item-nombre{
+    font-size:13px;
+    color:var(--text-soft);
+    margin-top:6px;
 }
 
 /* FORMULARIOS */

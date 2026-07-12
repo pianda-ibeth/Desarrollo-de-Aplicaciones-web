@@ -14,11 +14,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
- <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- =====================================================================
+     BLOQUE: NAVEGACIÓN / MENÚ
+     Futuro Flask: se moverá a "templates/partials/nav.html" y se incluirá
+     en base.html con {% include 'partials/nav.html' %}
+===================================================================== -->
 <nav class="navbar navbar-dark bg-dark sticky-top">
 
     <div class="container">
@@ -67,7 +72,14 @@
     </div>
 
 </nav>
+<!-- FIN BLOQUE: NAVEGACIÓN / MENÚ -->
 
+
+<!-- =====================================================================
+     BLOQUE: ENCABEZADO (HERO)
+     Futuro Flask: se moverá a "templates/partials/header.html" y también
+     se incluirá desde base.html, justo debajo del nav.
+===================================================================== -->
 <header>
 
     <h1 class="logo-tech">
@@ -83,7 +95,16 @@
     </a>
 
 </header>
+<!-- FIN BLOQUE: ENCABEZADO -->
 
+
+<!-- =====================================================================
+     BLOQUE: CONTENIDO PRINCIPAL (DINÁMICO)
+     Futuro Flask: este <main> equivale al bloque {% block content %}
+     de base.html. Cada <section> de aquí adentro sería, más adelante,
+     una plantilla/página distinta (inicio.html, productos.html, etc.)
+     que hereda de base.html con {% extends "base.html" %}
+===================================================================== -->
 <main>
 
 <section id="inicio" class="container text-center p-5">
@@ -139,98 +160,21 @@
 
 </section>
 
+<!-- Sección de PRODUCTOS: el catálogo ya NO está escrito a mano en HTML.
+     Se genera dinámicamente en script.js a partir del arreglo de objetos
+     "catalogoProductos", recorrido con forEach (estructura repetitiva) y
+     con una condición que muestra un mensaje distinto según el estado
+     (disponible / próximamente) de cada categoría. Cada producto es un
+     objeto { nombre, imagen } y se renderiza con su propia imagen. -->
 <section id="productos" class="container my-5">
 
     <h2 class="section-title text-center">
         Productos
     </h2>
 
-    <div class="row">
-
-        <div class="col-md-3">
-
-            <div class="card m-2 h-100">
-
-                <div class="card-body">
-
-                    <h5>Laptops</h5>
-
-                    <ul>
-                        <li>HP Pavilion 15</li>
-                        <li>Lenovo IdeaPad 3</li>
-                        <li>Dell Inspiron 15</li>
-                        <li>ASUS VivoBook</li>
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card m-2 h-100">
-
-                <div class="card-body">
-
-                    <h5>Smartphones</h5>
-
-                    <ul>
-                        <li>Samsung Galaxy A55</li>
-                        <li>iPhone 15</li>
-                        <li>Xiaomi Redmi Note 13</li>
-                        <li>Motorola Edge 50</li>
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card m-2 h-100">
-
-                <div class="card-body">
-
-                    <h5>Accesorios Gamer</h5>
-
-                    <ul>
-                        <li>Mouse Redragon</li>
-                        <li>Teclado Mecánico</li>
-                        <li>Audífonos HyperX</li>
-                        <li>Mouse Pad RGB</li>
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card m-2 h-100">
-
-                <div class="card-body">
-
-                    <h5>Componentes PC</h5>
-
-                    <ul>
-                        <li>Intel Core i5</li>
-                        <li>AMD Ryzen 7</li>
-                        <li>RAM Kingston 16GB</li>
-                        <li>SSD Kingston 1TB</li>
-                    </ul>
-
-                </div>
-
-            </div>
-
-        </div>
-
+    <!-- Contenedor dinámico: aquí se inyectan las tarjetas de categorías -->
+    <div class="row" id="catalogoProductos">
+        <!-- Generado por JavaScript (ver script.js -> renderizarCatalogo) -->
     </div>
 
     <div class="text-center mt-5">
@@ -306,6 +250,9 @@
         <span id="totalProductos">0</span>
     </h4>
 
+    <!-- Lista dinámica: si no hay productos registrados se muestra un
+         mensaje de estado vacío; si hay, se listan las tarjetas
+         (ver script.js -> renderizarListaProductos) -->
     <div id="listaProductos" class="row mt-4"></div>
 
 </section>
@@ -388,7 +335,14 @@
 </aside>
 
 </main>
+<!-- FIN BLOQUE: CONTENIDO PRINCIPAL (DINÁMICO) -->
 
+
+<!-- =====================================================================
+     BLOQUE: PIE DE PÁGINA
+     Futuro Flask: se moverá a "templates/partials/footer.html" y se
+     incluirá desde base.html al final del documento.
+===================================================================== -->
 <footer>
 
     <p>Desarrollado por Maly Pianda</p>
@@ -396,6 +350,7 @@
     <p>2026</p>
 
 </footer>
+<!-- FIN BLOQUE: PIE DE PÁGINA -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="script.js"></script>

@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
 
     // ---------- Referencias a elementos del DOM ----------
@@ -10,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const divMensaje      = document.getElementById('mensaje');
     const spanTotal       = document.getElementById('totalProductos');
     const listaProductos  = document.getElementById('listaProductos');
+    const catalogoProductosDiv = document.getElementById('catalogoProductos');
 
     // Formulario de contacto (independiente, solo evitamos que recargue la página)
     const formularioContacto = document.getElementById('formularioContacto');
@@ -50,6 +49,58 @@ document.addEventListener('DOMContentLoaded', function () {
         'samsung', 'xiaomi', 'redmi', 'motorola', 'huawei', 'honor', 'oppo',
         'intel', 'amd', 'ryzen', 'kingston', 'logitech', 'redragon', 'hyperx', 'razer',
         'corsair', 'steelseries', 'jbl', 'sony', 'lg', 'nvidia', 'geforce', 'xbox', 'playstation', 'nintendo'
+    ];
+
+    // ---------- Datos del proyecto (arreglo de objetos) ----------
+    // Esta es la "fuente de datos" del catálogo. En una futura integración
+    // con Flask, esta información vendría de una base de datos y llegaría
+    // a la plantilla ya renderizada con Jinja2 (por ejemplo con
+    // {% for categoria in catalogo %} ... {% endfor %}).
+    // Cada producto ahora es un objeto { nombre, imagen } en vez de un simple
+    // texto. Las imágenes están guardadas en la carpeta "RECURSOS/" del
+    // proyecto (fotos reales de cada producto). Componentes PC no tiene
+    // imágenes porque su categoría está marcada como no disponible.
+    const catalogoProductos = [
+        {
+            categoria: 'Laptops',
+            disponible: true,
+            items: [
+                { nombre: 'HP Pavilion 15', imagen: 'RECURSOS/laptop-hp-pavilion-15.webp' },
+                { nombre: 'Lenovo IdeaPad 3', imagen: 'RECURSOS/lenovo-ideapad.jpg' },
+                { nombre: 'Dell Inspiron 15', imagen: 'RECURSOS/dell-inspiron.jpg' },
+                { nombre: 'ASUS VivoBook', imagen: 'RECURSOS/asus-vivobook.webp' }
+            ]
+        },
+        {
+            categoria: 'Smartphones',
+            disponible: true,
+            items: [
+                { nombre: 'Samsung Galaxy A55', imagen: 'RECURSOS/samsung-galaxy.jpg' },
+                { nombre: 'iPhone 15', imagen: 'RECURSOS/iphone-15.jpg' },
+                { nombre: 'Xiaomi Redmi Note 13', imagen: 'RECURSOS/redmi-note.jpg' },
+                { nombre: 'Motorola Edge 50', imagen: 'RECURSOS/motorola-edge.webp' }
+            ]
+        },
+        {
+            categoria: 'Accesorios Gamer',
+            disponible: true,
+            items: [
+                { nombre: 'Mouse Redragon', imagen: 'RECURSOS/mouse-redragon.jpg' },
+                { nombre: 'Teclado Mecánico', imagen: 'RECURSOS/teclado-mecanico.png' },
+                { nombre: 'Audífonos HyperX', imagen: 'RECURSOS/audifonos-hyperx.jpg' },
+                { nombre: 'Mouse Pad RGB', imagen: 'RECURSOS/mousepad.png' }
+            ]
+        },
+        {
+            categoria: 'Componentes PC',
+            disponible: false,
+            items: [
+                { nombre: 'Intel Core i5', imagen: '' },
+                { nombre: 'AMD Ryzen 7', imagen: '' },
+                { nombre: 'RAM Kingston 16GB', imagen: '' },
+                { nombre: 'SSD Kingston 1TB', imagen: '' }
+            ]
+        }
     ];
 
     // Detecta texto que "parece" escrito al azar (ej. hdsjjd, asdkjh)
@@ -221,6 +272,77 @@ document.addEventListener('DOMContentLoaded', function () {
         spanTotal.textContent = totalProductos;
     }
 
+    // ---------- Render del catálogo (sección "Productos") ----------
+    // Recorre el arreglo "catalogoProductos" (estructura repetitiva con
+    // forEach) y por cada categoría arma una tarjeta con su lista de
+    // artículos. Además aplica una condición: si "disponible" es false,
+    // en vez de la lista se muestra un mensaje de "próximamente".
+    function crearTarjetaCategoria(categoriaObj) {
+
+        const columna = document.createElement('div');
+        columna.className = 'col-md-3';
+
+        const tarjeta = document.createElement('div');
+        tarjeta.className = 'card m-2 h-100';
+
+        const cuerpo = document.createElement('div');
+        cuerpo.className = 'card-body';
+
+        const titulo = document.createElement('h5');
+        titulo.textContent = categoriaObj.categoria;
+        cuerpo.appendChild(titulo);
+
+        // Condición según el estado de los datos: disponible / no disponible
+        if (categoriaObj.disponible) {
+            const listaItems = document.createElement('div');
+            listaItems.className = 'lista-productos-categoria';
+
+            // Estructura repetitiva: una mini tarjeta con imagen por cada
+            // producto de la categoría
+            categoriaObj.items.forEach(function (articulo) {
+
+                const itemProducto = document.createElement('div');
+                itemProducto.className = 'producto-item';
+
+                const imagenProducto = document.createElement('img');
+                imagenProducto.src = articulo.imagen;
+                imagenProducto.alt = articulo.nombre;
+                imagenProducto.className = 'producto-item-img';
+                imagenProducto.loading = 'lazy';
+
+                const nombreProducto = document.createElement('p');
+                nombreProducto.className = 'producto-item-nombre';
+                nombreProducto.textContent = articulo.nombre;
+
+                itemProducto.appendChild(imagenProducto);
+                itemProducto.appendChild(nombreProducto);
+                listaItems.appendChild(itemProducto);
+            });
+
+            cuerpo.appendChild(listaItems);
+        } else {
+            const aviso = document.createElement('p');
+            aviso.className = 'text-muted fst-italic mb-0';
+            aviso.textContent = 'Próximamente disponible en la tienda.';
+            cuerpo.appendChild(aviso);
+        }
+
+        tarjeta.appendChild(cuerpo);
+        columna.appendChild(tarjeta);
+
+        return columna;
+    }
+
+    function renderizarCatalogo() {
+        catalogoProductosDiv.innerHTML = '';
+
+        // Estructura repetitiva sobre el arreglo de objetos del catálogo
+        catalogoProductos.forEach(function (categoriaObj) {
+            const tarjeta = crearTarjetaCategoria(categoriaObj);
+            catalogoProductosDiv.appendChild(tarjeta);
+        });
+    }
+
     // Crea la tarjeta (card) de un producto nuevo usando createElement/appendChild
     function crearTarjetaProducto(nombre, descripcion, categoria, id) {
 
@@ -256,6 +378,7 @@ document.addEventListener('DOMContentLoaded', function () {
             columna.remove();
             totalProductos--;
             actualizarTotal();
+            renderizarEstadoListaProductos();
             mostrarMensaje('"' + nombre + '" fue eliminado del catálogo.', 'warning');
         });
 
@@ -267,6 +390,25 @@ document.addEventListener('DOMContentLoaded', function () {
         columna.appendChild(tarjeta);
 
         return columna;
+    }
+
+    // Condición según el estado de los datos: si no hay productos
+    // registrados todavía, se muestra un mensaje informativo en vez
+    // de dejar la sección vacía.
+    function renderizarEstadoListaProductos() {
+        const mensajeVacio = document.getElementById('listaProductosVacia');
+
+        if (totalProductos === 0) {
+            if (!mensajeVacio) {
+                const aviso = document.createElement('p');
+                aviso.id = 'listaProductosVacia';
+                aviso.className = 'text-muted col-12';
+                aviso.textContent = 'Aún no hay productos registrados. Usa el formulario para agregar el primero.';
+                listaProductos.appendChild(aviso);
+            }
+        } else if (mensajeVacio) {
+            mensajeVacio.remove();
+        }
     }
 
     // ---------- Validación en tiempo real ----------
@@ -310,6 +452,8 @@ document.addEventListener('DOMContentLoaded', function () {
         contadorId++;
         totalProductos++;
 
+        renderizarEstadoListaProductos(); // quita el mensaje de "vacío" si existía
+
         const nuevaTarjeta = crearTarjetaProducto(nombre, descripcion, categoria, contadorId);
         listaProductos.appendChild(nuevaTarjeta);
 
@@ -329,5 +473,9 @@ document.addEventListener('DOMContentLoaded', function () {
             formularioContacto.reset();
         });
     }
+
+    // ---------- Inicialización ----------
+    renderizarCatalogo();
+    renderizarEstadoListaProductos();
 
 });
