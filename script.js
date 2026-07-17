@@ -10,8 +10,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const listaProductos  = document.getElementById('listaProductos');
     const catalogoProductosDiv = document.getElementById('catalogoProductos');
 
+    // Botón de registrar + spinner de Bootstrap
+    const btnRegistrar      = document.getElementById('btnRegistrar');
+    const spinnerRegistrar  = document.getElementById('spinnerRegistrar');
+    const textoBtnRegistrar = document.getElementById('textoBtnRegistrar');
+
     // Formulario de contacto (independiente, solo evitamos que recargue la página)
     const formularioContacto = document.getElementById('formularioContacto');
+
+    // ---------- Modales de Bootstrap ----------
+    const elModalDetalle   = document.getElementById('modalDetalleProducto');
+    const modalDetalle     = new bootstrap.Modal(elModalDetalle);
+    const modalDetalleBadge = document.getElementById('modalDetalleBadge');
+    const modalDetalleNombre = document.getElementById('modalDetalleNombre');
+    const modalDetalleDescripcion = document.getElementById('modalDetalleDescripcion');
+
+    const elModalConfirmar = document.getElementById('modalConfirmarEliminar');
+    const modalConfirmar   = new bootstrap.Modal(elModalConfirmar);
+    const modalConfirmarNombre = document.getElementById('modalConfirmarNombre');
+    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+    // Guarda temporalmente los datos del producto que se quiere eliminar,
+    // mientras el usuario confirma o cancela en el modal.
+    let productoPendienteEliminar = null;
 
     // ---------- Estado ----------
     let totalProductos = 0;
@@ -343,7 +364,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Crea la tarjeta (card) de un producto nuevo usando createElement/appendChild
+    // Crea la tarjeta (card) de un producto nuevo usando createElement/appendChild.
+    // Incluye botones "Ver detalle" (abre modal de detalle) y "Eliminar"
+    // (abre modal de confirmación antes de borrar).
     function crearTarjetaProducto(nombre, descripcion, categoria, id) {
 
         const columna = document.createElement('div');
@@ -356,8 +379,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const cuerpo = document.createElement('div');
         cuerpo.className = 'card-body d-flex flex-column';
 
+        const claseColor = colorPorCategoria[categoria] || 'bg-secondary';
+
         const insignia = document.createElement('span');
-        insignia.className = 'badge ' + (colorPorCategoria[categoria] || 'bg-secondary') + ' mb-2 align-self-start';
+        insignia.className = 'badge ' + claseColor + ' mb-2 align-self-start';
         insignia.textContent = categoria;
 
         const titulo = document.createElement('h5');
@@ -368,29 +393,64 @@ document.addEventListener('DOMContentLoaded', function () {
         parrafoDescripcion.className = 'card-text flex-grow-1';
         parrafoDescripcion.textContent = descripcion;
 
+        // Contenedor de botones de acción
+        const grupoBotones = document.createElement('div');
+        grupoBotones.className = 'd-flex gap-2 mt-2';
+
+        const botonDetalle = document.createElement('button');
+        botonDetalle.type = 'button';
+        botonDetalle.className = 'btn btn-outline-primary btn-sm';
+        botonDetalle.textContent = 'Ver detalle';
+
+        // Evento click: abre el modal de detalle con la info del producto
+        botonDetalle.addEventListener('click', function () {
+            modalDetalleBadge.className = 'badge ' + claseColor + ' mb-2';
+            modalDetalleBadge.textContent = categoria;
+            modalDetalleNombre.textContent = nombre;
+            modalDetalleDescripcion.textContent = descripcion;
+            modalDetalle.show();
+        });
+
         const botonEliminar = document.createElement('button');
         botonEliminar.type = 'button';
-        botonEliminar.className = 'btn btn-outline-danger btn-sm mt-2';
+        botonEliminar.className = 'btn btn-outline-danger btn-sm';
         botonEliminar.textContent = 'Eliminar';
 
-        // Evento click para eliminar este producto del catálogo
+        // Evento click: en vez de eliminar directo, abre el modal de
+        // confirmación. El borrado real ocurre al confirmar (ver más abajo).
         botonEliminar.addEventListener('click', function () {
-            columna.remove();
-            totalProductos--;
-            actualizarTotal();
-            renderizarEstadoListaProductos();
-            mostrarMensaje('"' + nombre + '" fue eliminado del catálogo.', 'warning');
+            productoPendienteEliminar = { columna: columna, nombre: nombre };
+            modalConfirmarNombre.textContent = nombre;
+            modalConfirmar.show();
         });
+
+        grupoBotones.appendChild(botonDetalle);
+        grupoBotones.appendChild(botonEliminar);
 
         cuerpo.appendChild(insignia);
         cuerpo.appendChild(titulo);
         cuerpo.appendChild(parrafoDescripcion);
-        cuerpo.appendChild(botonEliminar);
+        cuerpo.appendChild(grupoBotones);
         tarjeta.appendChild(cuerpo);
         columna.appendChild(tarjeta);
 
         return columna;
     }
+
+    // Ejecuta el borrado real del producto pendiente (llamado desde el
+    // botón "Sí, eliminar" del modal de confirmación).
+    btnConfirmarEliminar.addEventListener('click', function () {
+        if (!productoPendienteEliminar) return;
+
+        productoPendienteEliminar.columna.remove();
+        totalProductos--;
+        actualizarTotal();
+        renderizarEstadoListaProductos();
+        mostrarMensaje('"' + productoPendienteEliminar.nombre + '" fue eliminado del catálogo.', 'warning');
+
+        productoPendienteEliminar = null;
+        modalConfirmar.hide();
+    });
 
     // Condición según el estado de los datos: si no hay productos
     // registrados todavía, se muestra un mensaje informativo en vez
@@ -449,20 +509,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const descripcion = inputDescripcion.value.trim();
         const categoria = selectCategoria.value;
 
-        contadorId++;
-        totalProductos++;
+        // Activa el spinner de Bootstrap y bloquea el botón mientras se
+        // "procesa" el registro (simulación de una operación asíncrona,
+        // por ejemplo una futura llamada a la API de Flask).
+        btnRegistrar.disabled = true;
+        spinnerRegistrar.classList.remove('d-none');
+        textoBtnRegistrar.textContent = 'Registrando...';
 
-        renderizarEstadoListaProductos(); // quita el mensaje de "vacío" si existía
+        setTimeout(function () {
 
-        const nuevaTarjeta = crearTarjetaProducto(nombre, descripcion, categoria, contadorId);
-        listaProductos.appendChild(nuevaTarjeta);
+            contadorId++;
+            totalProductos++;
 
-        actualizarTotal();
-        mostrarMensaje('Producto "' + nombre + '" registrado correctamente.', 'success');
+            renderizarEstadoListaProductos(); // quita el mensaje de "vacío" si existía
 
-        formulario.reset();
-        limpiarValidacion();
-        inputNombre.focus();
+            const nuevaTarjeta = crearTarjetaProducto(nombre, descripcion, categoria, contadorId);
+            listaProductos.appendChild(nuevaTarjeta);
+
+            actualizarTotal();
+            mostrarMensaje('Producto "' + nombre + '" registrado correctamente.', 'success');
+
+            formulario.reset();
+            limpiarValidacion();
+            inputNombre.focus();
+
+            // Restaura el botón a su estado normal
+            btnRegistrar.disabled = false;
+            spinnerRegistrar.classList.add('d-none');
+            textoBtnRegistrar.textContent = 'Registrar';
+
+        }, 900);
     });
 
     // ---------- Formulario de contacto: solo evitamos la recarga ----------
