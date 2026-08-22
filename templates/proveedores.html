@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}TechStore Maly - Proveedores{% endblock %}
+
+{% block header %}
+    <h1 class="logo-tech">Módulo de Proveedores</h1>
+    <p class="lead">Empresas aliadas de TechStore Maly (datos de ejemplo)</p>
+{% endblock %}
+
+{% block content %}
+
+<section class="container my-5">
+
+    <h2 class="section-title text-center">Proveedores</h2>
+
+    <div class="row">
+        {% for proveedor in proveedores %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ proveedor.empresa }}</h5>
+                    <p class="card-text mb-1"><strong>Contacto:</strong> {{ proveedor.contacto }}</p>
+                    <p class="card-text mb-1"><strong>Producto principal:</strong> {{ proveedor.producto_principal }}</p>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ proveedor.telefono }}</p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No hay proveedores registrados.</p>
+        {% endfor %}
+    </div>
+
+</section>
+
+{% endblock %}

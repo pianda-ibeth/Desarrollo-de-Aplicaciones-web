@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}TechStore Maly - Clientes{% endblock %}
+
+{% block header %}
+    <h1 class="logo-tech">Módulo de Clientes</h1>
+    <p class="lead">Gestión básica de clientes registrados (datos de ejemplo)</p>
+{% endblock %}
+
+{% block content %}
+
+<section class="container my-5">
+
+    <h2 class="section-title text-center">Clientes Registrados</h2>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Ciudad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.telefono }}</td>
+                    <td>{{ cliente.ciudad }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center text-muted">No hay clientes registrados.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}

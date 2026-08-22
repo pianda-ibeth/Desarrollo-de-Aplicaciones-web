@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}TechStore Maly - Facturación{% endblock %}
+
+{% block header %}
+    <h1 class="logo-tech">Módulo de Facturación</h1>
+    <p class="lead">Historial de facturas emitidas (datos de ejemplo)</p>
+{% endblock %}
+
+{% block content %}
+
+<section class="container my-5">
+
+    <h2 class="section-title text-center">Facturas</h2>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>N° Factura</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for factura in facturas %}
+                <tr>
+                    <td>{{ factura.numero }}</td>
+                    <td>{{ factura.cliente }}</td>
+                    <td>{{ factura.fecha }}</td>
+                    <td>${{ "%.2f"|format(factura.total) }}</td>
+                    <td>
+                        {% if factura.estado == "Pagada" %}
+                            <span class="badge bg-info">Pagada</span>
+                        {% else %}
+                            <span class="badge bg-warning">Pendiente</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted">No hay facturas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}
