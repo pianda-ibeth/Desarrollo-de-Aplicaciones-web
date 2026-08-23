@@ -49,6 +49,17 @@
 
 </section>
 
+<section id="datos-tienda" class="container my-5 text-center">
+
+    <h2 class="section-title">Información de la Tienda</h2>
+
+    <p><strong>Nombre:</strong> {{ info_tienda.nombre }}</p>
+    <p><strong>Eslogan:</strong> {{ info_tienda.eslogan|capitalize }}</p>
+    <p><strong>Fundada en:</strong> {{ info_tienda.anio_fundacion }}</p>
+    <p><strong>Ubicación:</strong> {{ info_tienda.ciudad|upper }}</p>
+
+</section>
+
 <!-- Catálogo dinámico generado por script.js -->
 <section id="productos" class="container my-5">
 

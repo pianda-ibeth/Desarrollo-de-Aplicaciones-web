@@ -13,6 +13,10 @@
 
     <h2 class="section-title text-center">Clientes Registrados</h2>
 
+    <p class="text-center text-muted">
+        Total de clientes registrados: <strong>{{ total_clientes }}</strong>
+    </p>
+
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
@@ -27,7 +31,7 @@
                 {% for cliente in clientes %}
                 <tr>
                     <td>{{ cliente.nombre }}</td>
-                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.correo|lower }}</td>
                     <td>{{ cliente.telefono }}</td>
                     <td>{{ cliente.ciudad }}</td>
                 </tr>

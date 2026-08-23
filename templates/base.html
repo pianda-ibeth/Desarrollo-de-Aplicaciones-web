@@ -21,87 +21,24 @@
 
 <body>
 
-<!-- BLOQUE: NAVEGACION / MENU (reutilizado por todas las paginas) -->
-<nav class="navbar navbar-dark bg-dark sticky-top">
+<!-- Componente reutilizable: navbar -->
+{% include "components/navbar.html" %}
 
-    <div class="container">
-
-        <a class="navbar-brand" href="{{ url_for('index') }}">
-            TECHSTORE MALY
-        </a>
-
-        <button class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#menu">
-
-            <span class="navbar-toggler-icon"></span>
-
-        </button>
-
-        <div class="collapse navbar-collapse" id="menu">
-
-            <ul class="navbar-nav ms-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('productos') }}">Productos</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('proveedores') }}">Proveedores</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('facturacion') }}">Facturación</a>
-                </li>
-
-            </ul>
-
-        </div>
-
-    </div>
-
-</nav>
-<!-- FIN BLOQUE: NAVEGACION / MENU -->
-
-
-<!-- BLOQUE: ENCABEZADO (HERO). Cada pagina puede sobreescribir el
-     titulo/subtitulo definiendo su propio bloque header. Si no lo hace,
-     se usa el contenido por defecto de aqui abajo. -->
+<!-- BLOQUE: ENCABEZADO (HERO) -->
 <header>
     {% block header %}
-        <h1 class="logo-tech">TECHSTORE MALY</h1>
-        <p class="lead">Innovación y tecnología al alcance de todos</p>
+        <h1 class="logo-tech">{{ nombre_tienda|upper }}</h1>
+        <p class="lead">{{ eslogan_tienda }}</p>
     {% endblock %}
 </header>
-<!-- FIN BLOQUE: ENCABEZADO -->
-
 
 <!-- BLOQUE: CONTENIDO PRINCIPAL (varia segun la pagina) -->
 <main>
     {% block content %}{% endblock %}
 </main>
-<!-- FIN BLOQUE: CONTENIDO PRINCIPAL -->
 
-
-<!-- BLOQUE: PIE DE PAGINA -->
-<footer>
-
-    <p>Desarrollado por Maly Pianda</p>
-    <p>Desarrollo de Aplicaciones Web</p>
-    <p>2026</p>
-
-</footer>
-<!-- FIN BLOQUE: PIE DE PAGINA -->
-
+<!-- Componente reutilizable: footer -->
+{% include "components/footer.html" %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -13,6 +13,10 @@
 
     <h2 class="section-title text-center">Listado de Productos</h2>
 
+    <p class="text-center text-muted">
+        Total de productos en catálogo: <strong>{{ total_productos }}</strong>
+    </p>
+
     <div class="row">
         {% for producto in productos %}
         <div class="col-md-3 mb-4">
@@ -23,7 +27,18 @@
                 <div class="card-body d-flex flex-column">
                     <span class="badge bg-primary mb-2 align-self-start">{{ producto.categoria }}</span>
                     <h5 class="card-title">{{ producto.nombre }}</h5>
-                    <p class="card-text flex-grow-1">${{ "%.2f"|format(producto.precio) }}</p>
+                    <p class="card-text">${{ "%.2f"|format(producto.precio) }}</p>
+
+                    {% if producto.stock > 0 %}
+                        <span class="badge bg-info align-self-start mt-auto">
+                            Disponible ({{ producto.stock }} unidades)
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger align-self-start mt-auto">
+                            Agotado
+                        </span>
+                    {% endif %}
+
                 </div>
             </div>
         </div>

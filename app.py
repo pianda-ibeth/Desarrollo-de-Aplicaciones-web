@@ -1,21 +1,47 @@
 from flask import Flask, render_template
+from datetime import datetime
 
 app = Flask(__name__)
 
 # ---------------------------------------------------------
+# Variables simples y diccionario de información general
+# de la tienda (se envían a TODAS las plantillas mediante
+# un context_processor, para que estén disponibles en
+# base.html, navbar.html y footer.html sin repetir código).
+# ---------------------------------------------------------
+
+info_tienda = {
+    "nombre": "TechStore Maly",
+    "eslogan": "Innovación y tecnología al alcance de todos",
+    "anio_fundacion": 2026,
+    "ciudad": "Manabí, Ecuador"
+}
+
+
+@app.context_processor
+def inject_datos_globales():
+    return {
+        "nombre_tienda": info_tienda["nombre"],
+        "eslogan_tienda": info_tienda["eslogan"],
+        "nombre_desarrollador": "Maly Pianda",
+        "anio_actual": datetime.now().year
+    }
+
+
+# ---------------------------------------------------------
 # Datos de ejemplo (demostrativos/estáticos).
-# En una futura etapa del proyecto vendrían de una base de datos.
+# En una futura etapa vendrían de una base de datos.
 # ---------------------------------------------------------
 
 productos_demo = [
     {"nombre": "HP Pavilion 15", "categoria": "Laptops",
-     "precio": 549.99, "imagen": "laptop-hp-pavilion-15.webp"},
+     "precio": 549.99, "stock": 8, "imagen": "laptop-hp-pavilion-15.webp"},
     {"nombre": "Samsung Galaxy A55", "categoria": "Smartphones",
-     "precio": 389.00, "imagen": "samsung-galaxy.jpg"},
+     "precio": 389.00, "stock": 0, "imagen": "samsung-galaxy.jpg"},
     {"nombre": "Mouse Redragon", "categoria": "Accesorios Gamer",
-     "precio": 24.50, "imagen": "mouse-redragon.jpg"},
+     "precio": 24.50, "stock": 15, "imagen": "mouse-redragon.jpg"},
     {"nombre": "Audífonos HyperX", "categoria": "Accesorios Gamer",
-     "precio": 45.00, "imagen": "audifonos-hyperx.jpg"},
+     "precio": 45.00, "stock": 0, "imagen": "audifonos-hyperx.jpg"},
 ]
 
 clientes_demo = [
@@ -51,17 +77,19 @@ facturas_demo = [
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', info_tienda=info_tienda)
 
 
 @app.route('/productos')
 def productos():
-    return render_template('productos.html', productos=productos_demo)
+    total_productos = len(productos_demo)
+    return render_template('productos.html', productos=productos_demo, total_productos=total_productos)
 
 
 @app.route('/clientes')
 def clientes():
-    return render_template('clientes.html', clientes=clientes_demo)
+    total_clientes = len(clientes_demo)
+    return render_template('clientes.html', clientes=clientes_demo, total_clientes=total_clientes)
 
 
 @app.route('/proveedores')
