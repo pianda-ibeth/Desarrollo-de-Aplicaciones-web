@@ -11,7 +11,12 @@
 
 <section class="container my-5">
 
-    <h2 class="section-title text-center">Listado de Productos</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="section-title mb-0">Listado de Productos</h2>
+        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-success">
+            + Agregar producto
+        </a>
+    </div>
 
     <p class="text-center text-muted">
         Total de productos en catálogo: <strong>{{ total_productos }}</strong>
@@ -30,15 +35,19 @@
                     <p class="card-text">${{ "%.2f"|format(producto.precio) }}</p>
 
                     {% if producto.stock > 0 %}
-                        <span class="badge bg-info align-self-start mt-auto">
+                        <span class="badge bg-info align-self-start mt-2">
                             Disponible ({{ producto.stock }} unidades)
                         </span>
                     {% else %}
-                        <span class="badge bg-danger align-self-start mt-auto">
+                        <span class="badge bg-danger align-self-start mt-2">
                             Agotado
                         </span>
                     {% endif %}
 
+                    <a href="{{ url_for('editar_producto', indice=loop.index0) }}"
+                       class="btn btn-sm btn-outline-warning mt-auto pt-2">
+                        Editar
+                    </a>
                 </div>
             </div>
         </div>
