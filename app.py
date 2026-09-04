@@ -1,14 +1,17 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
-from flask import Flask, render_template, redirect, url_for, flash
 from datetime import datetime, date
 
 from forms.producto_form import ProductoForm
 from forms.cliente_form import ClienteForm
 from forms.proveedor_form import ProveedorForm
 from forms.facturacion_form import FacturacionForm
+from db import get_connection, init_db
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'clave-secreta-techstore-2026'  # necesaria para CSRF con Flask-WTF
+
+# Crea data/techstore.db y la tabla productos si no existen (no borra datos al reiniciar)
+init_db()
 
 # ---------------------------------------------------------
 # Variables simples y diccionario de información general
@@ -36,21 +39,10 @@ def inject_datos_globales():
 
 
 # ---------------------------------------------------------
-# Datos de ejemplo (demostrativos). Sirven ahora como
-# almacenamiento temporal en memoria para los formularios.
-# En una futura etapa vendrían de una base de datos.
+# Datos de ejemplo (demostrativos) para los módulos que
+# TODAVÍA no tienen persistencia en SQLite. Se mantienen
+# igual que en la Semana 11; productos ya no los usa.
 # ---------------------------------------------------------
-
-productos_demo = [
-    {"nombre": "HP Pavilion 15", "categoria": "Laptops",
-     "precio": 549.99, "stock": 8, "imagen": "laptop-hp-pavilion-15.webp"},
-    {"nombre": "Samsung Galaxy A55", "categoria": "Smartphones",
-     "precio": 389.00, "stock": 0, "imagen": "samsung-galaxy.jpg"},
-    {"nombre": "Mouse Redragon", "categoria": "Accesorios Gamer",
-     "precio": 24.50, "stock": 15, "imagen": "mouse-redragon.jpg"},
-    {"nombre": "Audífonos HyperX", "categoria": "Accesorios Gamer",
-     "precio": 45.00, "stock": 0, "imagen": "audifonos-hyperx.jpg"},
-]
 
 clientes_demo = [
     {"nombre": "Ana Torres", "correo": "ana.torres@mail.com",
@@ -83,7 +75,7 @@ facturas_demo = [
 ]
 
 # ---------------------------------------------------------
-# Rutas de listado (ya existentes, sin cambios)
+# Rutas de listado
 # ---------------------------------------------------------
 
 @app.route('/')
@@ -93,8 +85,12 @@ def index():
 
 @app.route('/productos')
 def productos():
-    total_productos = len(productos_demo)
-    return render_template('productos.html', productos=productos_demo, total_productos=total_productos)
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM productos ORDER BY id DESC")
+    lista_productos = cursor.fetchall()
+    conn.close()
+    return render_template('productos.html', productos=lista_productos, total_productos=len(lista_productos))
 
 
 @app.route('/clientes')
@@ -117,40 +113,73 @@ def facturacion():
 # Rutas de formularios (Semana 11 - Flask-WTF)
 # ---------------------------------------------------------
 
-# --- Productos ---
+# --- Productos (con persistencia SQLite) ---
 @app.route('/productos/nuevo', methods=['GET', 'POST'])
 def nuevo_producto():
     form = ProductoForm()
     if form.validate_on_submit():
-        productos_demo.append({
-            "nombre": form.nombre.data,
-            "categoria": form.categoria.data,
-            "precio": form.precio.data,
-            "stock": form.stock.data,
-            "imagen": "img.png"
-        })
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO productos (nombre, descripcion, categoria, precio, stock, imagen)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            form.nombre.data,
+            form.descripcion.data,
+            form.categoria.data,
+            form.precio.data,
+            form.stock.data,
+            "img.png"
+        ))
+        conn.commit()
+        conn.close()
+
         flash('Producto guardado correctamente', 'success')
         return redirect(url_for('productos'))
     return render_template('formulario_producto.html', form=form, titulo='Nuevo producto')
 
 
-@app.route('/productos/editar/<int:indice>', methods=['GET', 'POST'])
-def editar_producto(indice):
-    producto = productos_demo[indice]
-    form = ProductoForm(data=producto)
+@app.route('/productos/editar/<int:producto_id>', methods=['GET', 'POST'])
+def editar_producto(producto_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM productos WHERE id = ?", (producto_id,))
+    producto = cursor.fetchone()
+
+    if producto is None:
+        conn.close()
+        flash('Producto no encontrado', 'danger')
+        return redirect(url_for('productos'))
+
+    if request.method == 'GET':
+        form = ProductoForm(data=dict(producto))
+    else:
+        form = ProductoForm()
+
     if form.validate_on_submit():
-        productos_demo[indice].update({
-            "nombre": form.nombre.data,
-            "categoria": form.categoria.data,
-            "precio": form.precio.data,
-            "stock": form.stock.data,
-        })
+        cursor.execute("""
+            UPDATE productos
+            SET nombre = ?, descripcion = ?, categoria = ?, precio = ?, stock = ?
+            WHERE id = ?
+        """, (
+            form.nombre.data,
+            form.descripcion.data,
+            form.categoria.data,
+            form.precio.data,
+            form.stock.data,
+            producto_id
+        ))
+        conn.commit()
+        conn.close()
+
         flash('Producto actualizado correctamente', 'success')
         return redirect(url_for('productos'))
+
+    conn.close()
     return render_template('formulario_producto.html', form=form, titulo='Editar producto')
 
 
-# --- Clientes ---
+# --- Clientes (todavía en memoria, sin cambios) ---
 @app.route('/clientes/nuevo', methods=['GET', 'POST'])
 def nuevo_cliente():
     form = ClienteForm()
@@ -194,7 +223,7 @@ def editar_cliente(indice):
     return render_template('formulario_cliente.html', form=form, titulo='Editar cliente')
 
 
-# --- Proveedores ---
+# --- Proveedores (todavía en memoria, sin cambios) ---
 @app.route('/proveedores/nuevo', methods=['GET', 'POST'])
 def nuevo_proveedor():
     form = ProveedorForm()
@@ -235,7 +264,8 @@ def editar_proveedor(indice):
         return redirect(url_for('proveedores'))
     return render_template('formulario_proveedor.html', form=form, titulo='Editar proveedor')
 
-# --- Facturación ---
+
+# --- Facturación (todavía en memoria, sin cambios) ---
 @app.route('/facturacion/nuevo', methods=['GET', 'POST'])
 def nueva_factura():
     form = FacturacionForm()
